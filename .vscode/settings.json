@@ -1,0 +1,2 @@
+{ 
+    "rust-analyzer.server.path": "/nix/store/x1a0nkia8py5fwb5055pisv0mlzqx8x6-rust-stable/bin/rust-analyzer"  }

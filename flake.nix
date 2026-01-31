@@ -16,14 +16,34 @@
   }:
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = import nixpkgs {inherit system;};
-      toolchain = fenix.packages.${system}.fromToolchainFile {
-        file = ./rust-toolchain.toml;
-        sha256 = "sha256-vra6TkHITpwRyA5oBKAHSX0Mi6CBDNQD+ryPSpxFsfg=";
-      };
+
+      rustPackages = let
+        toolchain = with fenix.packages.${system}; let
+          system = fromToolchainFile {
+            file = ./rust-toolchain.toml;
+            sha256 = "sha256-vra6TkHITpwRyA5oBKAHSX0Mi6CBDNQD+ryPSpxFsfg=";
+          };
+          wasm = targets.wasm32-unknown-unknown.stable.rust-std;
+        in
+          combine [system wasm];
+      in
+        with pkgs; [
+          toolchain
+          wasm-pack
+          llvmPackages.bintools
+          wasm-bindgen-cli
+        ];
+
+      nodePackages = with pkgs; [
+        nodejs_24
+        corepack_24
+      ];
     in {
       devShells.default = pkgs.mkShell {
         inherit system;
-        packages = [toolchain];
+        packages = nodePackages ++ rustPackages;
+
+        CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_LINKER = "lld";
       };
     });
 }

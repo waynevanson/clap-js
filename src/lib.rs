@@ -1,14 +1,24 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
+use clap::Command;
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+pub struct OurCommand {
+    inner: Command,
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+#[wasm_bindgen]
+impl OurCommand {
+    #[wasm_bindgen(constructor)]
+    pub fn new(name: String) -> Self {
+        Self {
+            inner: Command::new(name),
+        }
+    }
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+    #[wasm_bindgen]
+    pub fn default() -> Self {
+        Self {
+            inner: Command::default(),
+        }
     }
 }
