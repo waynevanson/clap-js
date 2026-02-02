@@ -1,8 +1,8 @@
-import {describe,test,expect} from 'vitest'
-import {OurCommand} from '../pkg'
+import { describe, test, expect } from "vitest";
+import { ArgMatches, Command } from "../src/lib.rs";
 
-describe('clap-js',() => {
-    test('constructor',() => {
-        expect(() => new OurCommand('hello')).not.toThrow()
-    })
-})
+describe("clap-js", () => {
+	test("constructor", () => {
+		expect(() => new Command("hello")).not.toThrow();
+	});
+});

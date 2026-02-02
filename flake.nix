@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     fenix = {
       url = "github:nix-community/fenix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -17,26 +17,32 @@
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = import nixpkgs {inherit system;};
 
-      rustPackages = let
-        toolchain = with fenix.packages.${system}; let
-          system = fromToolchainFile {
-            file = ./rust-toolchain.toml;
-            sha256 = "sha256-vra6TkHITpwRyA5oBKAHSX0Mi6CBDNQD+ryPSpxFsfg=";
-          };
-          wasm = targets.wasm32-unknown-unknown.stable.rust-std;
-        in
-          combine [system wasm];
-      in
-        with pkgs; [
-          toolchain
-          wasm-pack
-          llvmPackages.bintools
-          wasm-bindgen-cli
-        ];
+      toolchains = with fenix.packages.${system}; rec {
+        system = fromToolchainFile {
+          file = ./rust-toolchain.toml;
+          sha256 = "sha256-vra6TkHITpwRyA5oBKAHSX0Mi6CBDNQD+ryPSpxFsfg=";
+        };
+        wasm = targets.wasm32-unknown-unknown.stable.rust-std;
+        combined = combine [system wasm];
+      };
+
+      rustPlatform = pkgs.makeRustPlatform {
+        cargo = toolchains.system;
+        rustc = toolchains.system;
+      };
+
+      rustPackages = with pkgs; [
+        toolchains.combined
+        wasm-pack
+        llvmPackages.bintools
+        wasm-bindgen-cli
+        cargo-watch
+      ];
 
       nodePackages = with pkgs; [
         nodejs_24
         corepack_24
+        biome
       ];
     in {
       devShells.default = pkgs.mkShell {
