@@ -41,14 +41,14 @@ impl ArgMatches {
     pub fn get_one(self, id: String) -> Result<Option<JsValue>, String> {
         let string = || {
             self.inner
-                .try_get_one::<f64>(&id)
-                .map(|a| a.map(|b| JsValue::from_f64(*b)))
+                .try_get_one::<String>(&id)
+                .map(|a| a.map(|b| JsValue::from_str(b)))
         };
 
         let number = || {
             self.inner
-                .try_get_one::<String>(&id)
-                .map(|a| a.map(|b| JsValue::from_str(b)))
+                .try_get_one::<f64>(&id)
+                .map(|a| a.map(|b| JsValue::from_f64(*b)))
         };
 
         let boolean = || {
