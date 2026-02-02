@@ -3,3 +3,4 @@
 node_modules/
 /pkg/
 *.rs.d.ts
+/coverage/

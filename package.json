@@ -12,6 +12,7 @@
 		"@biomejs/biome": "^2.3.13",
 		"@types/node": "^24.10.9",
 		"@types/picomatch": "^4.0.2",
+		"@vitest/coverage-v8": "4.0.18",
 		"@waynevanson/vite-plugin-cargo": "^1.0.0",
 		"picomatch": "^4.0.3",
 		"rollup": "^4.57.1",
