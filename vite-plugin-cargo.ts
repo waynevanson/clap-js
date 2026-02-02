@@ -1,22 +1,13 @@
-import { defineConfig, type Plugin } from "vitest/config";
-import wasm from "vite-plugin-wasm";
-import picomatch from "picomatch";
-import path from "node:path";
 import { execFileSync } from "node:child_process";
-import * as v from "valibot";
 import { createHash } from "node:crypto";
-
-export default defineConfig({
-	plugins: [
-		cargo({
-			includes: "**/src/lib.rs",
-		}),
-		wasm(),
-	],
-});
+import path from "node:path";
+import picomatch from "picomatch";
+import * as v from "valibot";
+import type { Plugin } from "vitest/config";
 
 type MetadaSchemaOptions = { project: string; id: string };
 
+// todo: Replace all schema with only parsing what we need to searching.
 const MetadataSchema = (options: MetadaSchemaOptions) =>
 	v.nonNullish(
 		v.pipe(
@@ -112,6 +103,7 @@ function compileLibrary(options: MetadaSchemaOptions, isServe: boolean) {
 		.split("\n")
 		.map((json) => JSON.parse(json));
 
+	// find the `.wasm` file
 	const filename: string = json
 		.filter((a) => a?.reason === "compiler-artifact")
 		.filter((a) => a?.manifest_path === options.project)[0]?.filenames?.[0];
@@ -119,21 +111,22 @@ function compileLibrary(options: MetadaSchemaOptions, isServe: boolean) {
 	return filename;
 }
 
+export type VitePluginCargoOptions = {
+	includes: picomatch.Glob;
+	browserOnly?: boolean;
+	noTypescript?: boolean;
+} & (
+	| { noDefaultFeatures?: boolean; features?: Array<string> }
+	| { allFeatures: true }
+);
+
 // 1. Plugin for Rust -> WASM -> WASM + ESM
-export function cargo(
-	pluginOptions: {
-		includes: picomatch.Glob;
-		wasmBindgen?: {
-			browserOnly?: boolean;
-			noTypescript?: boolean;
-		};
-	} & (
-		| { noDefaultFeatures?: boolean; features?: Array<string> }
-		| { allFeatures: true }
-	),
-): Plugin<never> {
+// Dependencies:
+// 1. `cargo`
+// 2. `wasm_bindgen`
+export function cargo(pluginOptions: VitePluginCargoOptions): Plugin<never> {
 	const matches = picomatch(pluginOptions.includes, { contains: true });
-	const typescript = !(pluginOptions.wasmBindgen?.noTypescript ?? false);
+	const typescript = !(pluginOptions?.noTypescript ?? false);
 
 	let isServe = false;
 
@@ -193,6 +186,7 @@ export function cargo(
 					`--out-dir=${outDir}`,
 					isServe && `--debug`,
 					typescript || `--no-typescript`,
+					pluginOptions.browserOnly && `--browser`,
 					wasm,
 				].filter((a): a is string => typeof a === "string"),
 			);
