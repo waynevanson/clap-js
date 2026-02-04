@@ -21,8 +21,8 @@ importers:
         specifier: 4.0.18
         version: 4.0.18(vitest@4.0.18(@types/node@24.10.9))
       '@waynevanson/vite-plugin-cargo':
-        specifier: ^1.0.0
-        version: 1.0.0(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.9))
+        specifier: ../vite-plugin-cargo
+        version: link:../vite-plugin-cargo
       picomatch:
         specifier: ^4.0.3
         version: 4.0.3
@@ -41,6 +41,9 @@ importers:
       vite:
         specifier: ^7.3.1
         version: 7.3.1(@types/node@24.10.9)
+      vite-plugin-wasm:
+        specifier: ^3.5.0
+        version: 3.5.0(vite@7.3.1(@types/node@24.10.9))
       vitest:
         specifier: ^4.0.18
         version: 4.0.18(@types/node@24.10.9)
@@ -468,11 +471,6 @@ packages:
   '@vitest/utils@4.0.18':
     resolution: {integrity: sha512-msMRKLMVLWygpK3u2Hybgi4MNjcYJvwTb0Ru09+fOyCXIgT5raYP041DRRdiJiI3k/2U6SEbAETB3YtBrUkCFA==}
 
-  '@waynevanson/vite-plugin-cargo@1.0.0':
-    resolution: {integrity: sha512-6yINVxs1SlzOenoAlaqbV8xL72hn8/zU/FH53dHvFn6thm4OWtrFxFTpvRXPEbTE5VtpaXkNhj51QI9HdNR3Ug==}
-    peerDependencies:
-      vite: ^7.3.1
-
   assertion-error@2.0.1:
     resolution: {integrity: sha512-Izi8RQcffqCeNVgFigKli1ssklIbpHnCYc6AknXGYoB6grJqyeby7jv12JUQgmTAnIDnbck1uxksT4dzN3PWBA==}
     engines: {node: '>=12'}
@@ -628,6 +626,11 @@ packages:
     peerDependenciesMeta:
       typescript:
         optional: true
+
+  vite-plugin-wasm@3.5.0:
+    resolution: {integrity: sha512-X5VWgCnqiQEGb+omhlBVsvTfxikKtoOgAzQ95+BZ8gQ+VfMHIjSHr0wyvXFQCa0eKQ0fKyaL0kWcEnYqBac4lQ==}
+    peerDependencies:
+      vite: ^2 || ^3 || ^4 || ^5 || ^6 || ^7
 
   vite@7.3.1:
     resolution: {integrity: sha512-w+N7Hifpc3gRjZ63vYBXA56dvvRlNWRczTdmCBBa+CotUzAPf5b7YMdMR/8CQoeYE5LX3W4wj6RYTgonm1b9DA==}
@@ -992,14 +995,6 @@ snapshots:
       '@vitest/pretty-format': 4.0.18
       tinyrainbow: 3.0.3
 
-  '@waynevanson/vite-plugin-cargo@1.0.0(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.9))':
-    dependencies:
-      picomatch: 4.0.3
-      valibot: 1.2.0(typescript@5.9.3)
-      vite: 7.3.1(@types/node@24.10.9)
-    transitivePeerDependencies:
-      - typescript
-
   assertion-error@2.0.1: {}
 
   ast-v8-to-istanbul@0.3.11:
@@ -1168,6 +1163,10 @@ snapshots:
   valibot@1.2.0(typescript@5.9.3):
     optionalDependencies:
       typescript: 5.9.3
+
+  vite-plugin-wasm@3.5.0(vite@7.3.1(@types/node@24.10.9)):
+    dependencies:
+      vite: 7.3.1(@types/node@24.10.9)
 
   vite@7.3.1(@types/node@24.10.9):
     dependencies:

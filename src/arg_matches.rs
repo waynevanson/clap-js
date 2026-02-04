@@ -1,5 +1,6 @@
 use clap::ArgMatches as ClapArgMatches;
 use wasm_bindgen::prelude::*;
+
 #[wasm_bindgen]
 pub struct ArgMatches {
     pub(crate) inner: ClapArgMatches,
@@ -7,6 +8,14 @@ pub struct ArgMatches {
 
 #[wasm_bindgen]
 impl ArgMatches {
+    #[wasm_bindgen]
+    pub fn get_one_string(self, id: String) -> Result<Option<String>, String> {
+        self.inner
+            .try_get_one::<String>(&id)
+            .map(|a| a.cloned())
+            .map_err(|_| "Unable to convert the unmatches id from String".to_string())
+    }
+
     #[wasm_bindgen]
     pub fn get_one(self, id: String) -> Result<Option<JsValue>, String> {
         let string = || {
